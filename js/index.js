@@ -1,34 +1,44 @@
-import { API_URL, getFormData } from "./helpers/index.js";
-
-const register = async (data) => {
-  const response = await fetch(`${API_URL}/auth/register`, {
-    method: 'POST',
-    headers: {
-      'Content-type': 'application/json'
-    },
-    body: JSON.stringify(data)
-  })
-  const json = await response.json()
-  return json;
-}
-
+import { API_URL, getFormData, postRequest } from "./helpers/index.js";
 
 (async (d) => {
-
-  const formuserRegister = d.getElementById('form-user-register')
+  const formUserRegister = d.getElementById('form-user-register');
+  const formCompanyRegister = d.getElementById('form-company-register');
+  const formLogin = d.getElementById('form-login');
  
-  formuserRegister.addEventListener('submit', async (e) => {
+  formUserRegister.addEventListener('submit', async (e) => {
     e.preventDefault();
     const data = getFormData(e.target);
-    console.log(data)
     
     try {
-      const resUserregister = await register(data)
-      console.log(resUserregister)
+      const result = await postRequest(data, 'auth/register')
     } catch (error) {
       console.log(error)
     }
   })
 
+  formCompanyRegister.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = getFormData(e.target);
+    
+    try {
+      const result = await postRequest(data, 'auth/register/company')
+      console.log(result)
+    } catch (error) {
+      console.log(error)
+    }
+  })
 
+  formLogin.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = getFormData(e.target);
+    
+    try {
+      const result = await postRequest(data, 'auth/login');
+      localStorage.setItem('uuid', result.uuid);
+      data.type === 'user' ? location.href = './profile.html' : location.href = './company.html'
+
+    } catch (error) {
+      console.log(error)
+    }
+  })
 })(document)
